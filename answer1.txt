@@ -1,0 +1,52 @@
+process.stdin.resume();
+process.stdin.setEncoding('ascii');
+
+var __input_stdin = "";
+var __input_stdin_array = "";
+var __input_currentline = 0;
+
+process.stdin.on('data', function (data) {
+    __input_stdin += data;
+});
+
+
+function isValid(cardNumber) {
+    const checkDigit = cardNumber.substring(cardNumber.length - 1);
+    const toValidate = cardNumber.substring(0, cardNumber.length - 1);
+    let value = 0;
+    for (let i = 0; i < toValidate.length; i++) {
+        value += parseInt(toValidate.charAt(i)) * 2;
+    }
+
+    return value % 10 === parseInt(checkDigit);
+}
+
+function isAllowed(bannedPrefixes, cardNumber) {
+    for (let banned in bannedPrefixes) {
+        let bannedPrefix = bannedPrefixes[banned];
+        if (bannedPrefix.length <= cardNumber.length
+            && bannedPrefix === cardNumber.substring(0, bannedPrefix.length)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/*
+ * Complete the function below.
+ */
+function validateCards(bannedPrefixes, cardsToValidate) {
+    let result = [];
+    for (let card in cardsToValidate) {
+        let cardToValidate = cardsToValidate[card];
+        result.push({
+            card: cardToValidate,
+            isValid: isValid(cardToValidate),
+            isAllowed: isAllowed(bannedPrefixes, cardToValidate)
+        });
+    }
+    return result;
+}
+
+var fs = require('fs');

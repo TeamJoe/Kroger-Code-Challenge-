@@ -1,0 +1,66 @@
+process.stdin.resume();
+process.stdin.setEncoding('ascii');
+
+var __input_stdin = "";
+
+process.stdin.on('data', function (data) {
+    __input_stdin += data;
+});
+
+const isValidType = (type) => {
+    return type != null;
+}
+
+const isValidUser = (user) => {
+    if (user.length < 2) {
+        return false;
+    }
+
+    let toValidate = user.substring(0, 2);
+    let checkDigit = user.substring(user.length - 1);
+
+    return parseInt(toValidate) % parseInt(checkDigit) === 0;
+}
+
+const isError = (log) => {
+    if (!isValidUser(log.userID)) {
+        return true;
+    } else if (parseInt(log.statusCode) >= 400) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+const getType = (log) => {
+    let type = log.type;
+    if (isError(log)) {
+        type = "ERROR";
+    }
+    return type;
+}
+
+const logType = (result, type, messageID) => {
+    let values = result[type];
+    if (values == null) {
+        values = [];
+    }
+    values.push(messageID);
+
+    result[type] = values;
+}
+
+const validateLogs = (logs) => {
+    let result = {};
+    for (let logI in logs) {
+        let log = logs[logI];
+        if (isValidType(log.type)) {
+            let type = getType(log);
+            logType(result, type, log.messageID);
+        }
+    }
+
+    return result;
+}
+
+var fs = require('fs');
